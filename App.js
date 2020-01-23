@@ -1,98 +1,104 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableHighlight } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { Devices } from './Devices/Devices';
-import { Settings } from './Settings/Settings'
+import { Settings } from './Settings/Settings';
+import People from './People/People';
+import { Ionicons } from '@expo/vector-icons';
+import { Provider } from 'react-redux';
+import configureStore from './configureStore';
 
-// class HomeScreen extends Component {
-//   render() {
-//     return (
-//       <View style={styles.container}>
-//         <Text>Home Screen!!!</Text>
-//         <Button
-//           title= "Go to details"
-//           onPress={()=> {
-//               this.props.navigation.navigate('Details', {passedParams: "Parameter from Home screen"})
-//             }
-//           }
-//         />
-//       </View>
-//     );
-//   }
-// }
+const store = configureStore();
 
-// class DetailsScreen extends Component {    
-//   static navigationOptions = ({ navigation }) => {
-//     const { params } = navigation.state;
-//     return {
-//       title: params ? params.passedParams : 'Detailsssss'
+// const StackNavigation = createStackNavigator(
+//   {
+//     DevicesScreen: {
+//       screen: Devices
+//     },
+//     SettingsScreen: {
+//       screen: Settings
 //     }
-//   };
-//   render() {
-//     return (
-//       <View style={styles.container}>
-//         <Text>Details Screen!!!</Text>
-//         <Button
-//           title= "Go to Home"
-//           onPress={()=> this.props.navigation.goBack()}
-//         />
-//       </View>
-//     );
+//   },
+//   {
+//     tabBarPosition: 'bottom',
+//     initialRouteName: 'DevicesScreen'
 //   }
-// }
-
-const StackNavigation = createStackNavigator(
-  {
-    DevicesScreen: {
-      screen: Devices
-    },
-    SettingsScreen: {
-      screen: Settings
-    }
-  },
-  {
-    tabBarPosition: 'bottom',
-    initialRouteName: 'DevicesScreen'
-  }
-)
+// )
 
 const DrawerNavigation = createDrawerNavigator(
   {
+    PeopleScreen: {
+      navigationOptions: {
+        drawerIcon: ({ tintColor }) => (
+          <Ionicons name="md-home" style={{ color: tintColor }} />
+        ),
+        drawerLabel: "People"
+      },
+      screen: People
+    },
     DevicesScreen: {
+      navigationOptions: {
+        drawerIcon: ({ tintColor }) => (
+          <Ionicons name="md-home" style={{ color: tintColor }} />
+        ),
+        drawerLabel: "Devices"
+      },
       screen: Devices
     },
     SettingsScreen: {
+      navigationOptions: {
+        drawerIcon: ({ tintColor }) => (
+          <Ionicons name="md-settings" style={{ color: tintColor }} />
+        ),
+        drawerLabel: "Settings"
+      },
       screen: Settings
     }
   },
   {
-    initialRouteName: 'DevicesScreen',
+    initialRouteName: 'PeopleScreen',
     drawerType: "slide",
     drawerPosition: "left"
   }
 )
 
-const TabsNavigation = createBottomTabNavigator(
-  {
-    DevicesScreen: {
-      screen: Devices
-    },
-    SettingsScreen: {
-      screen: Settings
-    }
-  },
-  {
-    initialRouteName: 'DevicesScreen'
-  }
-)
+// const TabsNavigation = createBottomTabNavigator(
+//   {
+//     DevicesScreen: {
+//       screen: Devices
+//     },
+//     SettingsScreen: {
+//       screen: Settings
+//     }
+//   },
+//   {
+//     initialRouteName: 'DevicesScreen'
+//   }
+// )
 
-export default function App() {
+const CustomHeader = ({nav}) => (
+  <View styles={styles.container}>
+      <Ionicons
+        name="md-menu"
+        size={45}
+        color="black"
+        onPress={() => nav.openDrawer()}
+      />
+  </View>
+);
+
+export default class App extends Component {
+  render() {
+  // console.log("Props are = ", this.props.navigation);
   return (
-    <AppContainer/>
+    <Provider store={store}>
+      <AppContainer/>
+    </Provider>
   );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -104,6 +110,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const AppContainer = createAppContainer(StackNavigation);
-// const AppContainer = createAppContainer(DrawerNavigation);
+// const AppContainer = createAppContainer(StackNavigation);
+const AppContainer = createAppContainer(DrawerNavigation);
 // const AppContainer = createAppContainer(TabsNavigation);
