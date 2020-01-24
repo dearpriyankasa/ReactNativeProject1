@@ -6,7 +6,6 @@ export function fetchPeopleFromAPI() {
         fetch('https://swapi.co/api/people/')
             .then(res => res.json())
             .then(json => {
-                console.log('json:', json)
                 dispatch(getPeopleSuccess(json.results))
               })
             .catch(err => dispatch(getPeopleFailure(err)))
